@@ -1,0 +1,22 @@
+%arg -solver gurobi
+%display var x*
+
+parameters:
+
+	cities  := 1..81;
+	d[,] := readcsv("81citiesnew.csv");
+
+variables:
+
+	x[cities,cities]: binary;
+	u[cities]: integer[0..];
+
+objectives:
+
+	z: sum{i in cities, j in cities : d[i,j] * x[i,j] } ->min;
+
+constraints:
+
+	elif {i in cities  : sum{j in cities: x[i,j]} = 1; }
+	ozlem  {j in cities : sum{i in cities : x[i,j]} = 1; }
+	sub_tour {i := 2..81, j :=2..81, i<>j: u[i]-u[j]+81*x[i,j]<=80; }
